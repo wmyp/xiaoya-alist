@@ -21,6 +21,24 @@ export PATH
 #
 # ——————————————————————————————————————————————————————————————————————————————————
 #
+# 自动化模式说明：
+#
+# 本脚本支持自动模式，可以跳过所有交互式输入，直接使用默认值。
+#
+# 启用方法：
+#   export XIAOYA_AUTO_MODE=true
+#   bash all_in_one.sh
+#
+# 或者一行命令：
+#   XIAOYA_AUTO_MODE=true bash all_in_one.sh
+#
+# 在自动模式下：
+#   - 所有交互提示会显示，但不等待用户输入
+#   - 自动使用默认值（每个选项的默认值会在提示中标注）
+#   - 适合自动化部署和脚本化运行
+#
+# ——————————————————————————————————————————————————————————————————————————————————
+#
 DATE_VERSION="v1.8.4-2025_06_14_19_04"
 #
 # ——————————————————————————————————————————————————————————————————————————————————
@@ -481,7 +499,7 @@ function qrcode_mode_choose() {
             done
             INFO "请选择扫码绑定的设备（默认 1）"
             echo -e "${interface}\c"
-            read -erp "QRCODE_APP:" QRCODE_APP_NUM
+            auto_read -erp "QRCODE_APP:" QRCODE_APP_NUM
             [[ -z "${QRCODE_APP_NUM}" ]] && QRCODE_APP_NUM="1"
             for i in "${!qrcode_apps[@]}"; do
                 if [[ "$((i + 1))" == "${QRCODE_APP_NUM}" ]]; then
@@ -512,7 +530,7 @@ function qrcode_mode_choose() {
 
     while true; do
         INFO "请选择扫码模式 [ 1: 命令行扫码 | 2: 浏览器扫码 ]（默认 2）"
-        read -erp "QRCODE_MODE:" QRCODE_MODE
+        auto_read -erp "QRCODE_MODE:" QRCODE_MODE
         [[ -z "${QRCODE_MODE}" ]] && QRCODE_MODE="2"
         if [[ ${QRCODE_MODE} == [1] ]]; then
             # shellcheck disable=SC2046
@@ -551,7 +569,7 @@ function enter_aliyunpan_refreshtoken() {
 
     while true; do
         INFO "是否使用扫码自动获取 阿里云盘 Token [Y/n]（默认 Y）"
-        read -erp "Token:" choose_qrcode_aliyunpan_refreshtoken
+        auto_read -erp "Token:" choose_qrcode_aliyunpan_refreshtoken
         [[ -z "${choose_qrcode_aliyunpan_refreshtoken}" ]] && choose_qrcode_aliyunpan_refreshtoken="y"
         if [[ ${choose_qrcode_aliyunpan_refreshtoken} == [YyNn] ]]; then
             break
@@ -570,7 +588,7 @@ function enter_aliyunpan_refreshtoken() {
         fi
         while true; do
             INFO "输入你的 阿里云盘 Token（32位长）"
-            read -erp "TOKEN:" token
+            auto_read -erp "TOKEN:" token
             token_len=${#token}
             if [ "$token_len" -ne 32 ]; then
                 ERROR "长度不对,阿里云盘 Token是32位长"
@@ -610,7 +628,7 @@ function enter_aliyunpan_opentoken() {
 
     while true; do
         INFO "是否使用扫码自动获取 阿里云盘 Open Token [Y/n]（默认 Y）"
-        read -erp "Token:" choose_qrcode_aliyunpan_opentoken
+        auto_read -erp "Token:" choose_qrcode_aliyunpan_opentoken
         [[ -z "${choose_qrcode_aliyunpan_opentoken}" ]] && choose_qrcode_aliyunpan_opentoken="y"
         if [[ ${choose_qrcode_aliyunpan_opentoken} == [YyNn] ]]; then
             break
@@ -629,7 +647,7 @@ function enter_aliyunpan_opentoken() {
         fi
         while true; do
             INFO "输入你的 阿里云盘 Open Token（280位长或者335位长）"
-            read -erp "OPENTOKEN:" opentoken
+            auto_read -erp "OPENTOKEN:" opentoken
             opentoken_len=${#opentoken}
             if [[ "$opentoken_len" -ne 280 ]] && [[ "$opentoken_len" -ne 335 ]]; then
                 ERROR "长度不对,阿里云盘 Open Token是280位长或者335位"
@@ -674,7 +692,7 @@ function enter_115_cookie() {
     touch_chmod "${1}/115_cookie.txt"
     while true; do
         INFO "是否使用扫码自动获取 115 Cookie [Y/n]（默认 Y）"
-        read -erp "Cookie:" choose_qrcode_115_cookie
+        auto_read -erp "Cookie:" choose_qrcode_115_cookie
         [[ -z "${choose_qrcode_115_cookie}" ]] && choose_qrcode_115_cookie="y"
         if [[ ${choose_qrcode_115_cookie} == [YyNn] ]]; then
             break
@@ -691,7 +709,7 @@ function enter_115_cookie() {
         fi
         while true; do
             INFO "输入你的 115 Cookie"
-            read -erp "Cookie:" set_115_cookie
+            auto_read -erp "Cookie:" set_115_cookie
             echo -e "${set_115_cookie}" > ${1}/115_cookie.txt
             if check_115_cookie "${1}"; then
                 break
@@ -715,7 +733,7 @@ function settings_115_cookie() {
         if [ ! -f "${1}/115_cookie.txt" ] || ! check_115_cookie "${1}"; then
             while true; do
                 INFO "是否配置 115 Cookie [Y/n]（默认 n 不配置）"
-                read -erp "Cookie:" choose_115_cookie
+                auto_read -erp "Cookie:" choose_115_cookie
                 [[ -z "${choose_115_cookie}" ]] && choose_115_cookie="n"
                 if [[ ${choose_115_cookie} == [YyNn] ]]; then
                     break
@@ -736,7 +754,7 @@ function enter_quark_cookie() {
     touch_chmod "${1}/quark_cookie.txt"
     while true; do
         INFO "是否使用扫码自动获取 夸克 Cookie [Y/n]（默认 Y）"
-        read -erp "Cookie:" choose_qrcode_quark_cookie
+        auto_read -erp "Cookie:" choose_qrcode_quark_cookie
         [[ -z "${choose_qrcode_quark_cookie}" ]] && choose_qrcode_quark_cookie="y"
         if [[ ${choose_qrcode_quark_cookie} == [YyNn] ]]; then
             break
@@ -753,7 +771,7 @@ function enter_quark_cookie() {
         fi
         while true; do
             INFO "输入你的 夸克 Cookie"
-            read -erp "Cookie:" quark_cookie
+            auto_read -erp "Cookie:" quark_cookie
             echo -e "${quark_cookie}" > ${1}/quark_cookie.txt
             if check_quark_cookie "${1}"; then
                 break
@@ -777,7 +795,7 @@ function settings_quark_cookie() {
         if [ ! -f "${1}/quark_cookie.txt" ] || ! check_quark_cookie "${1}"; then
             while true; do
                 INFO "是否配置 夸克 Cookie [Y/n]（默认 n 不配置）"
-                read -erp "Cookie:" choose_quark_cookie
+                auto_read -erp "Cookie:" choose_quark_cookie
                 [[ -z "${choose_quark_cookie}" ]] && choose_quark_cookie="n"
                 if [[ ${choose_quark_cookie} == [YyNn] ]]; then
                     break
@@ -798,7 +816,7 @@ function enter_uc_cookie() {
     touch_chmod "${1}/uc_cookie.txt"
     while true; do
         INFO "是否使用扫码自动获取 UC Cookie [Y/n]（默认 Y）"
-        read -erp "Cookie:" choose_qrcode_uc_cookie
+        auto_read -erp "Cookie:" choose_qrcode_uc_cookie
         [[ -z "${choose_qrcode_uc_cookie}" ]] && choose_qrcode_uc_cookie="y"
         if [[ ${choose_qrcode_uc_cookie} == [YyNn] ]]; then
             break
@@ -815,7 +833,7 @@ function enter_uc_cookie() {
         fi
         while true; do
             INFO "输入你的 UC Cookie"
-            read -erp "Cookie:" uc_cookie
+            auto_read -erp "Cookie:" uc_cookie
             echo -e "${uc_cookie}" > ${1}/uc_cookie.txt
             if check_uc_cookie "${1}"; then
                 break
@@ -839,7 +857,7 @@ function settings_uc_cookie() {
         if [ ! -f "${1}/uc_cookie.txt" ] || ! check_uc_cookie "${1}"; then
             while true; do
                 INFO "是否配置 UC Cookie [Y/n]（默认 n 不配置）"
-                read -erp "Cookie:" choose_uc_cookie
+                auto_read -erp "Cookie:" choose_uc_cookie
                 [[ -z "${choose_uc_cookie}" ]] && choose_uc_cookie="n"
                 if [[ ${choose_uc_cookie} == [YyNn] ]]; then
                     break
@@ -860,11 +878,11 @@ function enter_pikpak_account() {
     touch_chmod "${1}/pikpak.txt"
     INFO "输入你的 PikPak 账号（手机号或邮箱）"
     INFO "如果手机号，要\"+区号\"，比如你的手机号\"12345678900\"那么就填\"+8612345678900\""
-    read -erp "PikPak_Username:" PikPak_Username
+    auto_read -erp "PikPak_Username:" PikPak_Username
     INFO "输入你的 PikPak 账号密码"
-    read -erp "PikPak_Password:" PikPak_Password
+    auto_read -erp "PikPak_Password:" PikPak_Password
     INFO "输入你的 PikPak X-Device-Id"
-    read -erp "PikPak_Device_Id:" PikPak_Device_Id
+    auto_read -erp "PikPak_Device_Id:" PikPak_Device_Id
     echo -e "\"${PikPak_Username}\" \"${PikPak_Password}\" \"web\" \"${PikPak_Device_Id}\"" > ${1}/pikpak.txt
 
 }
@@ -883,7 +901,7 @@ function settings_pikpak_account() {
         if [ ! -f "${1}/pikpak.txt" ]; then
             while true; do
                 INFO "是否继续配置 PikPak 账号密码 [Y/n]（默认 n 不配置）"
-                read -erp "PikPak_Set:" PikPak_Set
+                auto_read -erp "PikPak_Set:" PikPak_Set
                 [[ -z "${PikPak_Set}" ]] && PikPak_Set="n"
                 if [[ ${PikPak_Set} == [YyNn] ]]; then
                     break
@@ -908,7 +926,7 @@ function enter_ali2115() {
     else
         while true; do
             INFO "输入你的 115 Cookie"
-            read -erp "Cookie:" set_115_cookie
+            auto_read -erp "Cookie:" set_115_cookie
             if [ -n "${set_115_cookie}" ]; then
                 break
             fi
@@ -916,7 +934,7 @@ function enter_ali2115() {
     fi
     while true; do
         INFO "是否自动删除115转存文件 [Y/n]（默认 Y）"
-        read -erp "purge_pan115_temp:" purge_pan115_temp
+        auto_read -erp "purge_pan115_temp:" purge_pan115_temp
         [[ -z "${purge_pan115_temp}" ]] && purge_pan115_temp="y"
         if [[ ${purge_pan115_temp} == [YyNn] ]]; then
             break
@@ -926,7 +944,7 @@ function enter_ali2115() {
     done
     while true; do
         INFO "是否自动删除阿里云盘转存文件 [Y/n]（默认 Y）"
-        read -erp "purge_ali_temp:" purge_ali_temp
+        auto_read -erp "purge_ali_temp:" purge_ali_temp
         [[ -z "${purge_ali_temp}" ]] && purge_ali_temp="y"
         if [[ ${purge_ali_temp} == [YyNn] ]]; then
             break
@@ -935,7 +953,7 @@ function enter_ali2115() {
         fi
     done
     INFO "输入你的 115 转存文件夹 id（默认 0）"
-    read -erp "dir_id:" dir_id
+    auto_read -erp "dir_id:" dir_id
     [[ -z "${dir_id}" ]] && dir_id=0
     if [[ ${purge_pan115_temp} == [Yy] ]]; then
         purge_pan115_temp=true
@@ -965,7 +983,7 @@ function settings_ali2115() {
         if [ ! -f "${1}/ali2115.txt" ]; then
             while true; do
                 INFO "是否配置 阿里转存115播放（ali2115.txt） [Y/n]（默认 n 不配置）"
-                read -erp "ali2115:" ali2115_set
+                auto_read -erp "ali2115:" ali2115_set
                 [[ -z "${ali2115_set}" ]] && ali2115_set="n"
                 if [[ ${ali2115_set} == [YyNn] ]]; then
                     break
@@ -1007,7 +1025,7 @@ function settings_aliyunpan_folder_id() {
     if [ ! -f "${1}/temp_transfer_folder_id.txt" ] || [ "$folderidstringsize" -le 39 ]; then
         while true; do
             INFO "是否自动获取 阿里云盘转存目录 folder id [Y/n]（默认 Y）"
-            read -erp "Token:" auto_get_folder_id
+            auto_read -erp "Token:" auto_get_folder_id
             [[ -z "${auto_get_folder_id}" ]] && auto_get_folder_id="y"
             if [[ ${auto_get_folder_id} == [YyNn] ]]; then
                 break
@@ -1024,7 +1042,7 @@ function settings_aliyunpan_folder_id() {
         if [ "$folderidstringsize" -le 39 ]; then
             while true; do
                 INFO "输入你的阿里云盘转存目录 folder id"
-                read -erp "FOLDERID:" folderid
+                auto_read -erp "FOLDERID:" folderid
                 folder_id_len=${#folderid}
                 if [ "$folder_id_len" -ne 40 ]; then
                     ERROR "长度不对，阿里云盘 folder id 是40位长"
@@ -1065,7 +1083,7 @@ function get_config_dir() {
             else
                 INFO "已读取小雅Alist配置文件路径：${xiaoya_config_dir} (默认不更改回车继续，如果需要更改请输入新路径)"
             fi
-            read -erp "CONFIG_DIR:" CONFIG_DIR
+            auto_read -erp "CONFIG_DIR:" CONFIG_DIR
             [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR=${xiaoya_config_dir}
         elif [ -f ${DDSREM_CONFIG_DIR}/xiaoya_alist_config_dir.txt ]; then
             OLD_CONFIG_DIR=$(cat ${DDSREM_CONFIG_DIR}/xiaoya_alist_config_dir.txt)
@@ -1074,12 +1092,12 @@ function get_config_dir() {
             else
                 INFO "已读取小雅Alist配置文件路径：${OLD_CONFIG_DIR} (默认不更改回车继续，如果需要更改请输入新路径)"
             fi
-            read -erp "CONFIG_DIR:" CONFIG_DIR
+            auto_read -erp "CONFIG_DIR:" CONFIG_DIR
             [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR=${OLD_CONFIG_DIR}
         else
             DEFAULT_CONFIG_DIR="$(get_path "xiaoya_alist_config_dir")"
             INFO "请输入配置文件目录（默认 ${DEFAULT_CONFIG_DIR} ）"
-            read -erp "CONFIG_DIR:" CONFIG_DIR
+            auto_read -erp "CONFIG_DIR:" CONFIG_DIR
             [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR="${DEFAULT_CONFIG_DIR}"
             touch "${DDSREM_CONFIG_DIR}/xiaoya_alist_config_dir.txt"
         fi
@@ -1127,12 +1145,12 @@ function get_media_dir() {
         if [ -f ${DDSREM_CONFIG_DIR}/xiaoya_alist_media_dir.txt ]; then
             OLD_MEDIA_DIR=$(cat ${DDSREM_CONFIG_DIR}/xiaoya_alist_media_dir.txt)
             INFO "已读取媒体库目录：${OLD_MEDIA_DIR} (默认不更改回车继续，如果需要更改请输入新路径)"
-            read -erp "MEDIA_DIR:" MEDIA_DIR
+            auto_read -erp "MEDIA_DIR:" MEDIA_DIR
             [[ -z "${MEDIA_DIR}" ]] && MEDIA_DIR=${OLD_MEDIA_DIR}
         else
             DEFAULT_MEDIA_DIR="$(get_path "xiaoya_alist_media_dir")"
             INFO "请输入媒体库目录（默认 ${DEFAULT_MEDIA_DIR} ）"
-            read -erp "MEDIA_DIR:" MEDIA_DIR
+            auto_read -erp "MEDIA_DIR:" MEDIA_DIR
             [[ -z "${MEDIA_DIR}" ]] && MEDIA_DIR="${DEFAULT_MEDIA_DIR}"
             touch "${DDSREM_CONFIG_DIR}/xiaoya_alist_media_dir.txt"
         fi
@@ -1157,7 +1175,7 @@ function main_account_management() {
         echo -e "2、删除"
         echo -e "0、返回上级"
         echo -e "——————————————————————————————————————————————————————————————————————————————————"
-        read -erp "请输入数字 [0-2]:" num
+        auto_read -erp "请输入数字 [0-2]:" num
         case "$num" in
         1)
             clear
@@ -1211,7 +1229,7 @@ function main_account_management() {
     echo -e "8、应用配置（自动重启小雅，并返回上级菜单）"
     echo -e "0、返回上级（从此处退出不会重启小雅，如果更改了上述配置请手动重启）"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-8]:" num
+    auto_read -erp "请输入数字 [0-8]:" num
     case "$num" in
     1)
         clear
@@ -1254,7 +1272,7 @@ function main_account_management() {
             docker restart xiaoya-115cleaner
         fi
         INFO "配置保存完成，按任意键返回菜单！"
-        read -rs -n 1 -p ""
+        auto_read -rs -n 1 -p ""
         clear
         main_xiaoya_alist
         ;;
@@ -1309,7 +1327,7 @@ function install_xiaoya_alist() {
     if [ -f "${CONFIG_DIR}/pikpak.txt" ] && [ ! -f "${CONFIG_DIR}/pikpakshare_list.txt" ] && command -v base64 > /dev/null 2>&1; then
         while true; do
             INFO "是否使用小雅官方分享的 pikpakshare_list.txt 文件 [Y/n]（默认 y）"
-            read -erp "pikpakshare_list_choose:" pikpakshare_list_choose
+            auto_read -erp "pikpakshare_list_choose:" pikpakshare_list_choose
             [[ -z "${pikpakshare_list_choose}" ]] && pikpakshare_list_choose="y"
             if [[ ${pikpakshare_list_choose} == [YyNn] ]]; then
                 break
@@ -1328,7 +1346,7 @@ function install_xiaoya_alist() {
     if [ -f "${CONFIG_DIR}/quark_cookie.txt" ] && [ ! -f "${CONFIG_DIR}/quarkshare_list.txt" ] && command -v base64 > /dev/null 2>&1; then
         while true; do
             INFO "是否使用小雅官方分享的 quarkshare_list.txt 文件 [Y/n]（默认 y）"
-            read -erp "quarkshare_list_choose:" quarkshare_list_choose
+            auto_read -erp "quarkshare_list_choose:" quarkshare_list_choose
             [[ -z "${quarkshare_list_choose}" ]] && quarkshare_list_choose="y"
             if [[ ${quarkshare_list_choose} == [YyNn] ]]; then
                 break
@@ -1349,7 +1367,7 @@ function install_xiaoya_alist() {
     if [ -f "${CONFIG_DIR}/115_cookie.txt" ] && [ ! -f "${CONFIG_DIR}/115share_list.txt" ] && command -v base64 > /dev/null 2>&1; then
         while true; do
             INFO "是否使用小雅官方分享的 115share_list.txt 文件 [Y/n]（默认 y）"
-            read -erp "pan115share_list_choose:" pan115share_list_choose
+            auto_read -erp "pan115share_list_choose:" pan115share_list_choose
             [[ -z "${pan115share_list_choose}" ]] && pan115share_list_choose="y"
             if [[ ${pan115share_list_choose} == [YyNn] ]]; then
                 break
@@ -1371,7 +1389,7 @@ function install_xiaoya_alist() {
             WARN "不开启强制登入可能造成以下风险："
             WARN "1. 暴露到公网可能被坏人扫描到并无限制使用"
             WARN "2. 多人异地访问可能触发网盘风控甚至封禁账号"
-            read -erp "force_login:" force_login
+            auto_read -erp "force_login:" force_login
             [[ -z "${force_login}" ]] && force_login="y"
             if [[ ${force_login} == [YyNn] ]]; then
                 break
@@ -1385,7 +1403,7 @@ function install_xiaoya_alist() {
                 while true; do
                     INFO "请配置强制登入密码"
                     WARN "注意：输入的密码不会在终端显示"
-                    read -ersp "PassWord: " password1
+                    auto_read -ersp "PassWord: " password1
                     echo ""
                     if [[ -z "$password1" ]]; then
                         echo "错误：密码不能为空"
@@ -1394,7 +1412,7 @@ function install_xiaoya_alist() {
                     fi
                 done
                 INFO "请再次输入密码进行验证"
-                read -ersp "PassWord: " password2
+                auto_read -ersp "PassWord: " password2
                 echo ""
                 if [[ "$password1" == "$password2" ]]; then
                     INFO "密码设置成功"
@@ -1434,7 +1452,7 @@ function install_xiaoya_alist() {
     if [ "${SET_NET_MODE}" == true ]; then
         while true; do
             INFO "是否使用host网络模式 [Y/n]（默认 n 不使用）"
-            read -erp "NET_MODE:" NET_MODE
+            auto_read -erp "NET_MODE:" NET_MODE
             [[ -z "${NET_MODE}" ]] && NET_MODE="n"
             if [[ ${NET_MODE} == [YyNn] ]]; then
                 break
@@ -1517,7 +1535,7 @@ function uninstall_xiaoya_alist() {
 
     while true; do
         INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
-        read -erp "Clean config:" CLEAN_CONFIG
+        auto_read -erp "Clean config:" CLEAN_CONFIG
         [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
         if [[ ${CLEAN_CONFIG} == [YyNn] ]]; then
             break
@@ -1632,7 +1650,7 @@ function main_xiaoya_alist() {
     echo -e "5、非内网IP访问次数查看"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-5]:" num
+    auto_read -erp "请输入数字 [0-5]:" num
     case "$num" in
     1)
         clear
@@ -1659,7 +1677,7 @@ function main_xiaoya_alist() {
         clear
         show_xiaoya_non_intranet_ip
         INFO "按任意键返回菜单"
-        read -rs -n 1 -p ""
+        auto_read -rs -n 1 -p ""
         clear
         main_xiaoya_alist
         ;;
@@ -2308,7 +2326,7 @@ function unzip_appoint_xiaoya_emby_jellyfin() {
         INFO "请选择要解压的压缩包目录 [ 1:动漫 | 2:每日更新 | 3:电影 | 4:电视剧 | 5:纪录片 | 6:纪录片（已刮削）| 7:综艺 | 8:短剧 ]"
         valid_choice=false
         while [ "$valid_choice" = false ]; do
-            read -erp "请输入数字 [1-8]:" choice
+            auto_read -erp "请输入数字 [1-8]:" choice
             for i in {1..8}; do
                 if [ "$choice" = "$i" ]; then
                     valid_choice=true
@@ -2349,7 +2367,7 @@ function unzip_appoint_xiaoya_emby_jellyfin() {
         INFO "请选择要解压的压缩包目录 [ 1:电视剧 | 2:电影 | 3:动漫 ]"
         valid_choice=false
         while [ "$valid_choice" = false ]; do
-            read -erp "请输入数字 [1-3]:" choice
+            auto_read -erp "请输入数字 [1-3]:" choice
             for i in {1..3}; do
                 if [ "$choice" = "$i" ]; then
                     valid_choice=true
@@ -2527,7 +2545,7 @@ function download_unzip_xiaoya_emby_new_config() {
         local OPERATE
         while true; do
             INFO "是否继续操作 [Y/n]（默认 Y）"
-            read -erp "OPERATE:" OPERATE
+            auto_read -erp "OPERATE:" OPERATE
             [[ -z "${OPERATE}" ]] && OPERATE="y"
             if [[ ${OPERATE} == [YyNn] ]]; then
                 break
@@ -2654,7 +2672,7 @@ function main_download_unzip_xiaoya_emby() {
         page="${1}"
     fi
     "main_download_unzip_xiaoya_emby_page${page}"
-    read -erp "请输入数字（支持输入多个数字，空格分离，按输入顺序执行）[0-21]:" -a nums
+    auto_read -erp "请输入数字（支持输入多个数字，空格分离，按输入顺序执行）[0-21]:" -a nums
     for num in "${nums[@]}"; do
         if [ $num -ge 1 ] && [ $num -le 20 ]; then
             case "$num" in
@@ -3004,7 +3022,7 @@ function install_lovechen_embyserver() {
 function choose_network_mode() {
 
     INFO "请选择使用的网络模式 [ 1:host | 2:bridge ]（默认 1）"
-    read -erp "Net:" MODE
+    auto_read -erp "Net:" MODE
     [[ -z "${MODE}" ]] && MODE="1"
     if [[ ${MODE} == [1] ]]; then
         MODE=host
@@ -3028,7 +3046,7 @@ function choose_emby_image() {
     INFO "您的架构是：$CPU_ARCH"
     if [ "${DOCKER_ARCH}" == "linux/amd64" ]; then
         INFO "请选择使用的Emby镜像 [ 1:amilys/embyserver | 2:emby/embyserver | 3:iceyheart/embycrk ]（默认 2）"
-        read -erp "IMAGE:" IMAGE
+        auto_read -erp "IMAGE:" IMAGE
         [[ -z "${IMAGE}" ]] && IMAGE="2"
         if [[ ${IMAGE} == [1] ]]; then
             CHOOSE_EMBY=amilys_embyserver
@@ -3045,7 +3063,7 @@ function choose_emby_image() {
     elif [ "${DOCKER_ARCH}" == "linux/arm64/v8" ]; then
         WARN "${DOCKER_ARCH} 只支持官方镜像！"
         INFO "请选择使用的Emby镜像 [ 1:emby/embyserver | 2:iceyheart/embycrk ]（默认 1）"
-        read -erp "IMAGE:" IMAGE
+        auto_read -erp "IMAGE:" IMAGE
         [[ -z "${IMAGE}" ]] && IMAGE="1"
         if [[ ${IMAGE} == [1] ]]; then
             CHOOSE_EMBY=amilys_embyserver
@@ -3117,7 +3135,7 @@ function get_xiaoya_hosts() { # 调用这个函数必须设置 $MODE 此变量
     # else
     #     WARN "hosts 文件设置错误！"
     #     INFO "是否使用脚本自动纠错（只支持单机部署自动纠错，如果小雅和全家桶不在同一台机器上，请手动修改）[Y/n]（默认 Y）"
-    #     read -erp "自动纠错:" FIX_HOST_ERROR
+    #     auto_read -erp "自动纠错:" FIX_HOST_ERROR
     #     [[ -z "${FIX_HOST_ERROR}" ]] && FIX_HOST_ERROR="y"
     #     if [[ ${FIX_HOST_ERROR} == [Yy] ]]; then
     #         INFO "开始自动纠错..."
@@ -3133,7 +3151,7 @@ function get_xiaoya_hosts() { # 调用这个函数必须设置 $MODE 此变量
         WARN "hosts 文件格式设置错误！"
         while true; do
             INFO "是否使用脚本自动纠错（只支持单机部署自动纠错，如果小雅和全家桶不在同一台机器上，请手动修改）[Y/n]（默认 Y）"
-            read -erp "自动纠错:" FIX_HOST_ERROR
+            auto_read -erp "自动纠错:" FIX_HOST_ERROR
             [[ -z "${FIX_HOST_ERROR}" ]] && FIX_HOST_ERROR="y"
             if [[ ${FIX_HOST_ERROR} == [YyNn] ]]; then
                 break
@@ -3345,11 +3363,11 @@ function install_emby_xiaoya_all_emby() {
             RETURN_DATA="$(data_crep "r" "install_xiaoya_emby")"
             if [ "${RETURN_DATA}" == "None" ]; then
                 INFO "请输入其他参数（默认 --device /dev/dri:/dev/dri --privileged -e GIDLIST=0,0 -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=all ）"
-                read -erp "Extra parameters:" extra_parameters
+                auto_read -erp "Extra parameters:" extra_parameters
                 [[ -z "${extra_parameters}" ]] && extra_parameters="--device /dev/dri:/dev/dri --privileged -e GIDLIST=0,0 -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=all"
             else
                 INFO "已读取您上次设置的参数：${RETURN_DATA} (默认不更改回车继续，如果需要更改请输入新参数)"
-                read -erp "Extra parameters:" extra_parameters
+                auto_read -erp "Extra parameters:" extra_parameters
                 [[ -z "${extra_parameters}" ]] && extra_parameters=${RETURN_DATA}
                 if [ "${extra_parameters}" == "None" ]; then
                     extra_parameters="--device /dev/dri:/dev/dri --privileged -e GIDLIST=0,0 -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=all"
@@ -3369,7 +3387,7 @@ function install_emby_xiaoya_all_emby() {
                     break
                 else
                     INFO "请选择 Emby 镜像版本 [ 1: 4.9.0.42 | 2；latest（${amilys_embyserver_latest_version}） ]（默认 1）"
-                    read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
+                    auto_read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
                     [[ -z "${CHOOSE_IMAGE_VERSION}" ]] && CHOOSE_IMAGE_VERSION="1"
                     case ${CHOOSE_IMAGE_VERSION} in
                     1)
@@ -3384,7 +3402,7 @@ function install_emby_xiaoya_all_emby() {
                         # break
                         WARN "小雅 Emby 全家桶目前不支持 latest 镜像！"
                         INFO "按任意键重新配置"
-                        read -rs -n 1 -p ""
+                        auto_read -rs -n 1 -p ""
                         ;;
                     *)
                         ERROR "输入无效，请重新选择"
@@ -3399,7 +3417,7 @@ function install_emby_xiaoya_all_emby() {
                 ;;
             "iceyheart_embycrk")
                 INFO "请选择 Emby 镜像版本 [ 1；4.9.0.42 ]（默认 1）"
-                read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
+                auto_read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
                 [[ -z "${CHOOSE_IMAGE_VERSION}" ]] && CHOOSE_IMAGE_VERSION="1"
                 case ${CHOOSE_IMAGE_VERSION} in
                 1)
@@ -3413,7 +3431,7 @@ function install_emby_xiaoya_all_emby() {
                 ;;
             "emby_embyserver")
                 INFO "请选择 Emby 镜像版本 [ 1；4.9.0.42 | 2；latest（${emby_embyserver_latest_version}） ]（默认 1）"
-                read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
+                auto_read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
                 [[ -z "${CHOOSE_IMAGE_VERSION}" ]] && CHOOSE_IMAGE_VERSION="1"
                 case ${CHOOSE_IMAGE_VERSION} in
                 1)
@@ -3425,7 +3443,7 @@ function install_emby_xiaoya_all_emby() {
                     # break
                     WARN "小雅 Emby 全家桶目前不支持 latest 镜像！"
                     INFO "按任意键重新配置"
-                    read -rs -n 1 -p ""
+                    auto_read -rs -n 1 -p ""
                     ;;
                 *)
                     ERROR "输入无效，请重新选择"
@@ -3515,7 +3533,7 @@ function oneclick_upgrade_emby() {
                 break
             else
                 INFO "请选择 Emby 镜像版本 [ 1；4.9.0.42 | 2；latest（${amilys_embyserver_latest_version}）| 3；beta（${amilys_embyserver_beta_version}）]（默认 1）"
-                read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
+                auto_read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
                 [[ -z "${CHOOSE_IMAGE_VERSION}" ]] && CHOOSE_IMAGE_VERSION="1"
                 case ${CHOOSE_IMAGE_VERSION} in
                 1)
@@ -3532,7 +3550,7 @@ function oneclick_upgrade_emby() {
                     # choose_emby_version="${amilys_embyserver_latest_version}"
                     WARN "小雅 Emby 全家桶目前不支持 latest 镜像！"
                     INFO "按任意键继续配置"
-                    read -rs -n 1 -p ""
+                    auto_read -rs -n 1 -p ""
                     ;;
                 3)
                     IMAGE_VERSION=beta
@@ -3557,7 +3575,7 @@ function oneclick_upgrade_emby() {
             exit 0
         elif [ "${old_image_name}" == "emby/embyserver" ] || [ "${old_image_name}" == "emby/embyserver_arm64v8" ]; then
             INFO "请选择 Emby 镜像版本 [ 1；4.9.0.42 | 2；latest（${emby_embyserver_latest_version}） | 3；beta（${emby_embyserver_beta_version}）]（默认 1）"
-            read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
+            auto_read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
             [[ -z "${CHOOSE_IMAGE_VERSION}" ]] && CHOOSE_IMAGE_VERSION="1"
             case ${CHOOSE_IMAGE_VERSION} in
             1)
@@ -3569,7 +3587,7 @@ function oneclick_upgrade_emby() {
                 # choose_emby_version="${emby_embyserver_latest_version}"
                 WARN "小雅 Emby 全家桶目前不支持 latest 镜像！"
                 INFO "按任意键继续配置"
-                read -rs -n 1 -p ""
+                auto_read -rs -n 1 -p ""
                 ;;
             3)
                 IMAGE_VERSION=beta
@@ -3703,7 +3721,7 @@ function emby_close_6908_port() {
     local OPERATE
     while true; do
         INFO "是否继续操作 [Y/n]（默认 Y）"
-        read -erp "OPERATE:" OPERATE
+        auto_read -erp "OPERATE:" OPERATE
         [[ -z "${OPERATE}" ]] && OPERATE="y"
         if [[ ${OPERATE} == [YyNn] ]]; then
             break
@@ -3884,7 +3902,7 @@ function xiaoya_emd_pathlib() {
         emd_all_paths=('动漫/' '每日更新/' '电影/' '电视剧/' '纪录片/' '纪录片（已刮削）/' '综艺/' '音乐/' '测试/' '📺画质演示测试（4K，8K，HDR，Dolby）/')
         interface=
         file_array=()
-        while IFS= read -r line; do
+        while IFS= auto_read -r line; do
             file_array+=("$line")
         done < "${PATHLIB_DIR}"
         for i in "${file_array[@]}"; do
@@ -3923,7 +3941,7 @@ function xiaoya_emd_pathlib() {
         fi
         echo -e "0、保存退出"
         echo -e "——————————————————————————————————————————————————————————————————————————————————"
-        read -erp "请输入数字或路径:" user_paths
+        auto_read -erp "请输入数字或路径:" user_paths
         if [ -n "${user_paths}" ]; then
             if [ "${user_paths}" == 0 ]; then
                 clear
@@ -3973,7 +3991,7 @@ function install_xiaoya_emd() {
     while true; do
         INFO "请输入您希望的爬虫同步间隔"
         WARN "循环时间必须大于12h，为了减轻服务器压力，请用户理解！"
-        read -erp "请输入以小时为单位的正整数同步间隔时间（默认：12）：" sync_interval
+        auto_read -erp "请输入以小时为单位的正整数同步间隔时间（默认：12）：" sync_interval
         [[ -z "${sync_interval}" ]] && sync_interval="12"
         if [[ "$sync_interval" -ge 12 ]]; then
             break
@@ -3988,7 +4006,7 @@ function install_xiaoya_emd() {
     while true; do
         INFO "是否开启重启容器自动更新到最新程序 [Y/n]（默认 n 不开启）"
         WARN "需要拥有良好的上网环境才可以更新成功，要能访问 Github 和 Python PIP 库！"
-        read -erp "RESTART_AUTO_UPDATE:" RESTART_AUTO_UPDATE
+        auto_read -erp "RESTART_AUTO_UPDATE:" RESTART_AUTO_UPDATE
         [[ -z "${RESTART_AUTO_UPDATE}" ]] && RESTART_AUTO_UPDATE="n"
         if [[ ${RESTART_AUTO_UPDATE} == [YyNn] ]]; then
             break
@@ -4004,7 +4022,7 @@ function install_xiaoya_emd() {
 
     while true; do
         INFO "请选择镜像版本 [ 1；latest | 2；beta ]（默认 1）"
-        read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
+        auto_read -erp "CHOOSE_IMAGE_VERSION:" CHOOSE_IMAGE_VERSION
         [[ -z "${CHOOSE_IMAGE_VERSION}" ]] && CHOOSE_IMAGE_VERSION="1"
         case ${CHOOSE_IMAGE_VERSION} in
         1)
@@ -4023,7 +4041,7 @@ function install_xiaoya_emd() {
 
     while true; do
         INFO "是否自动配置系统 inotify watches & instances 的数值 [Y/n]（默认 Y）"
-        read -erp "inotify:" inotify_set
+        auto_read -erp "inotify:" inotify_set
         [[ -z "${inotify_set}" ]] && inotify_set="y"
         if [[ ${inotify_set} == [YyNn] ]]; then
             break
@@ -4071,13 +4089,13 @@ function install_xiaoya_emd() {
             INFO "请输入运行参数（默认 --media /media --paths /media/pathlib.txt ）"
             WARN "如果需要更改此设置请注意容器目录映射，默认媒体库路径映射到容器内的 /media 文件夹下！"
             WARN "警告！！！ 默认请勿修改 /media 路径！！！"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
             [[ -z "${extra_parameters}" ]] && extra_parameters="--media /media --paths /media/pathlib.txt"
         else
             INFO "已读取您上次设置的运行参数：${RETURN_DATA} (默认不更改回车继续，如果需要更改请输入新参数)"
             WARN "如果需要更改此设置请注意容器目录映射，默认媒体库路径映射到容器内的 /media 文件夹下！"
             WARN "警告！！！ 默认请勿修改 /media 路径！！！"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
             [[ -z "${extra_parameters}" ]] && extra_parameters=${RETURN_DATA}
             if [ "${extra_parameters}" == "None" ]; then
                 extra_parameters="--media /media --paths /media/pathlib.txt"
@@ -4095,10 +4113,10 @@ function install_xiaoya_emd() {
         RETURN_DATA_2="$(data_crep "r" "install_xiaoya_emd_2")"
         if [ "${RETURN_DATA_2}" == "None" ]; then
             INFO "请输入运行容器额外参数（默认 无 ）"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
         else
             INFO "已读取您上次设置的运行容器额外参数：${RETURN_DATA_2} (默认不更改回车继续，如果需要更改请输入新参数)"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
             [[ -z "${extra_parameters}" ]] && extra_parameters=${RETURN_DATA_2}
         fi
         run_extra_parameters=$(data_crep "w" "install_xiaoya_emd_2")
@@ -4223,7 +4241,7 @@ function main_xiaoya_emd() {
     echo -e "7、重置爬虫数据库"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-7]:" num
+    auto_read -erp "请输入数字 [0-7]:" num
     case "$num" in
     1)
         clear
@@ -4333,7 +4351,7 @@ function install_xiaoya_emd_go() {
 
     while true; do
         INFO "请输入后台管理端口（默认 9801 ）"
-        read -erp "Web Port:" web_port
+        auto_read -erp "Web Port:" web_port
         [[ -z "${web_port}" ]] && web_port="9801"
         if check_port "${web_port}"; then
             break
@@ -4344,7 +4362,7 @@ function install_xiaoya_emd_go() {
 
     while true; do
         INFO "是否自动配置系统 inotify watches & instances 的数值 [Y/n]（默认 Y）"
-        read -erp "inotify:" inotify_set
+        auto_read -erp "inotify:" inotify_set
         [[ -z "${inotify_set}" ]] && inotify_set="y"
         if [[ ${inotify_set} == [YyNn] ]]; then
             break
@@ -4429,7 +4447,7 @@ function main_xiaoya_emd_go() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
@@ -4463,7 +4481,7 @@ function uninstall_xiaoya_all_emby() {
 
     while true; do
         INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
-        read -erp "Clean config:" CLEAN_CONFIG
+        auto_read -erp "Clean config:" CLEAN_CONFIG
         [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
         if [[ ${CLEAN_CONFIG} == [YyNn] ]]; then
             break
@@ -4516,7 +4534,7 @@ function auto_clean_metadata_mp4_files() {
     echo -e "2、一键清理当前所有 mp4 元数据文件"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-2]:" num
+    auto_read -erp "请输入数字 [0-2]:" num
     case "$num" in
     1)
         if [ "${__auto_clean_metadata_mp4_file}" == "false" ]; then
@@ -4535,7 +4553,7 @@ function auto_clean_metadata_mp4_files() {
         local OPERATE
         while true; do
             INFO "是否继续操作 [Y/n]（默认 Y）"
-            read -erp "OPERATE:" OPERATE
+            auto_read -erp "OPERATE:" OPERATE
             [[ -z "${OPERATE}" ]] && OPERATE="y"
             if [[ ${OPERATE} == [YyNn] ]]; then
                 break
@@ -4575,7 +4593,7 @@ function main_xiaoya_all_emby_other_features() {
     echo -e "2、关闭 Emby 6908 端口访问"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-2]:" num
+    auto_read -erp "请输入数字 [0-2]:" num
     case "$num" in
     1)
         clear
@@ -4637,9 +4655,9 @@ function main_xiaoya_all_emby() {
     echo -e "0、返回上级          "
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
     if [ "${show_main_xiaoya_all_emby}" == "true" ]; then
-        read -erp "请输入数字 [0-9]:" num
+        auto_read -erp "请输入数字 [0-9]:" num
     else
-        read -erp "请输入数字 [0]:" num
+        auto_read -erp "请输入数字 [0]:" num
     fi
     case "$num" in
     1)
@@ -4656,7 +4674,7 @@ function main_xiaoya_all_emby() {
         fi
         while true; do
             INFO "是否安装 小雅元数据定时爬虫 [Y/n]（默认 Y）"
-            read -erp "INSTALL:" xiaoya_emd_install
+            auto_read -erp "INSTALL:" xiaoya_emd_install
             [[ -z "${xiaoya_emd_install}" ]] && xiaoya_emd_install="y"
             if [[ ${xiaoya_emd_install} == [YyNn] ]]; then
                 break
@@ -4741,12 +4759,12 @@ function install_xiaoyahelper() {
     INFO "选择模式：[3/5]（默认 3）"
     INFO "模式3: 定时运行小雅转存清理并升级小雅镜像"
     INFO "模式5: 只要产生了播放缓存一分钟内立即清理。签到和定时升级同模式3"
-    read -erp "MODE:" MODE
+    auto_read -erp "MODE:" MODE
     [[ -z "${MODE}" ]] && MODE="3"
 
     while true; do
         INFO "是否使用Telegram通知 [Y/n]（默认 n 不使用）"
-        read -erp "TG:" TG
+        auto_read -erp "TG:" TG
         [[ -z "${TG}" ]] && TG="n"
         if [[ ${TG} == [YyNn] ]]; then
             break
@@ -4777,7 +4795,7 @@ function once_xiaoyahelper() {
 
     while true; do
         INFO "是否使用Telegram通知 [Y/n]（默认 n 不使用）"
-        read -erp "TG:" TG
+        auto_read -erp "TG:" TG
         [[ -z "${TG}" ]] && TG="n"
         if [[ ${TG} == [YyNn] ]]; then
             break
@@ -4807,7 +4825,7 @@ function uninstall_xiaoyahelper() {
 
     while true; do
         INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
-        read -erp "Clean config:" CLEAN_CONFIG
+        auto_read -erp "Clean config:" CLEAN_CONFIG
         [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
         if [[ ${CLEAN_CONFIG} == [YyNn] ]]; then
             break
@@ -4852,7 +4870,7 @@ function main_xiaoyahelper() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
@@ -4888,12 +4906,12 @@ function install_xiaoya_alist_tvbox() {
         if [ -f ${DDSREM_CONFIG_DIR}/xiaoya_alist_tvbox_config_dir.txt ]; then
             OLD_CONFIG_DIR=$(cat ${DDSREM_CONFIG_DIR}/xiaoya_alist_tvbox_config_dir.txt)
             INFO "已读取小雅Alist-TVBox配置文件路径：${OLD_CONFIG_DIR} (默认不更改回车继续，如果需要更改请输入新路径)"
-            read -erp "CONFIG_DIR:" CONFIG_DIR
+            auto_read -erp "CONFIG_DIR:" CONFIG_DIR
             [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR=${OLD_CONFIG_DIR}
         else
             DEFAULT_CONFIG_DIR="$(get_path "xiaoya_alist_config_dir")"
             INFO "请输入配置文件目录（默认 ${DEFAULT_CONFIG_DIR} ）"
-            read -erp "CONFIG_DIR:" CONFIG_DIR
+            auto_read -erp "CONFIG_DIR:" CONFIG_DIR
             [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR="${DEFAULT_CONFIG_DIR}"
             touch ${DDSREM_CONFIG_DIR}/xiaoya_alist_tvbox_config_dir.txt
         fi
@@ -4908,7 +4926,7 @@ function install_xiaoya_alist_tvbox() {
 
     while true; do
         INFO "请输入Alist端口（默认 5344 ）"
-        read -erp "ALIST_PORT:" ALIST_PORT
+        auto_read -erp "ALIST_PORT:" ALIST_PORT
         [[ -z "${ALIST_PORT}" ]] && ALIST_PORT="5344"
         if check_port "${ALIST_PORT}"; then
             break
@@ -4919,7 +4937,7 @@ function install_xiaoya_alist_tvbox() {
 
     while true; do
         INFO "请输入后台管理端口（默认 4567 ）"
-        read -erp "HT_PORT:" HT_PORT
+        auto_read -erp "HT_PORT:" HT_PORT
         [[ -z "${HT_PORT}" ]] && HT_PORT="4567"
         if check_port "${HT_PORT}"; then
             break
@@ -4929,14 +4947,14 @@ function install_xiaoya_alist_tvbox() {
     done
 
     INFO "请输入内存限制（默认 -Xmx512M ）"
-    read -erp "MEM_OPT:" MEM_OPT
+    auto_read -erp "MEM_OPT:" MEM_OPT
     [[ -z "${MEM_OPT}" ]] && MEM_OPT="-Xmx512M"
 
     INFO "您的CPU架构：${CPU_ARCH}"
     if [ "${DOCKER_ARCH}" == "linux/amd64" ]; then
         while true; do
             INFO "是否使用内存优化版镜像 [Y/n]（默认 n 不使用）"
-            read -erp "Native:" choose_native
+            auto_read -erp "Native:" choose_native
             [[ -z "${choose_native}" ]] && choose_native="n"
             if [[ ${choose_native} == [YyNn] ]]; then
                 break
@@ -4962,10 +4980,10 @@ function install_xiaoya_alist_tvbox() {
         RETURN_DATA="$(data_crep "r" "install_xiaoya_alist_tvbox")"
         if [ "${RETURN_DATA}" == "None" ]; then
             INFO "请输入其他参数（默认 无 ）"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
         else
             INFO "已读取您上次设置的参数：${RETURN_DATA} (默认不更改回车继续，如果需要更改请输入新参数)"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
             [[ -z "${extra_parameters}" ]] && extra_parameters=${RETURN_DATA}
         fi
         extra_parameters=$(data_crep "w" "install_xiaoya_alist_tvbox")
@@ -5034,7 +5052,7 @@ function uninstall_xiaoya_alist_tvbox() {
     local CLEAN_CONFIG IMAGE_NAME VOLUMES
     while true; do
         INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
-        read -erp "Clean config:" CLEAN_CONFIG
+        auto_read -erp "Clean config:" CLEAN_CONFIG
         [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
         if [[ ${CLEAN_CONFIG} == [YyNn] ]]; then
             break
@@ -5076,7 +5094,7 @@ function main_xiaoya_alist_tvbox() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
@@ -5125,7 +5143,7 @@ function install_xiaoya_115_cleaner() {
         touch ${config_dir}/115_key.txt
         INFO "输入你的 115 回收站密码"
         INFO "注意：此选项为必填项，如果您关闭了回收站密码请手动开启并输入！"
-        read -erp "Key:" password_key
+        auto_read -erp "Key:" password_key
         echo -e "${password_key}" > ${config_dir}/115_key.txt
     fi
 
@@ -5135,7 +5153,7 @@ function install_xiaoya_115_cleaner() {
         INFO "2：只清空 115云盘 回收站文件，不会清理其他地方的文件"
         INFO "3：清空 /最近接收 下面的文件并同时清空回收站"
         INFO "4：只清空 /最近接收 下面的文件，不清理回收站"
-        read -erp "CHOOSE_RUN_MODE:" CHOOSE_RUN_MODE
+        auto_read -erp "CHOOSE_RUN_MODE:" CHOOSE_RUN_MODE
         [[ -z "${CHOOSE_RUN_MODE}" ]] && CHOOSE_RUN_MODE="1"
         if [ -f "${config_dir}/115_cleaner_all_recyclebin.txt" ]; then
             rm -rf "${config_dir}/115_cleaner_all_recyclebin.txt"
@@ -5171,7 +5189,7 @@ function install_xiaoya_115_cleaner() {
     if [ -f "${config_dir}/ali2115.txt" ]; then
         while true; do
             INFO "是否将 ali2115 转存文件交由 115 Cleaner 清理 [Y/n]（默认 y）"
-            read -erp "ali2115:" choose_ali2115
+            auto_read -erp "ali2115:" choose_ali2115
             [[ -z "${choose_ali2115}" ]] && choose_ali2115="y"
             if [[ ${choose_ali2115} == [YyNn] ]]; then
                 break
@@ -5190,10 +5208,10 @@ function install_xiaoya_115_cleaner() {
         RETURN_DATA="$(data_crep "r" "install_xiaoya_115_cleaner")"
         if [ "${RETURN_DATA}" == "None" ]; then
             INFO "请输入其他参数（默认 无 ）"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
         else
             INFO "已读取您上次设置的参数：${RETURN_DATA} (默认不更改回车继续，如果需要更改请输入新参数)"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
             [[ -z "${extra_parameters}" ]] && extra_parameters=${RETURN_DATA}
         fi
         extra_parameters=$(data_crep "w" "install_xiaoya_115_cleaner")
@@ -5228,7 +5246,7 @@ function uninstall_xiaoya_115_cleaner() {
 
     while true; do
         INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
-        read -erp "Clean config:" CLEAN_CONFIG
+        auto_read -erp "Clean config:" CLEAN_CONFIG
         [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
         if [[ ${CLEAN_CONFIG} == [YyNn] ]]; then
             break
@@ -5268,7 +5286,7 @@ function main_xiaoya_115_cleaner() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
@@ -5318,10 +5336,10 @@ function install_xiaoya_proxy() {
         RETURN_DATA="$(data_crep "r" "install_xiaoya_proxy")"
         if [ "${RETURN_DATA}" == "None" ]; then
             INFO "请输入其他参数（默认 无 ）"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
         else
             INFO "已读取您上次设置的参数：${RETURN_DATA} (默认不更改回车继续，如果需要更改请输入新参数)"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
             [[ -z "${extra_parameters}" ]] && extra_parameters=${RETURN_DATA}
         fi
         extra_parameters=$(data_crep "w" "install_xiaoya_proxy")
@@ -5371,7 +5389,7 @@ function uninstall_xiaoya_proxy() {
 
     while true; do
         INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
-        read -erp "Clean config:" CLEAN_CONFIG
+        auto_read -erp "Clean config:" CLEAN_CONFIG
         [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
         if [[ ${CLEAN_CONFIG} == [YyNn] ]]; then
             break
@@ -5409,7 +5427,7 @@ function main_xiaoya_proxy() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
@@ -5530,7 +5548,7 @@ function uninstall_xiaoya_aliyuntvtoken_connector() {
 
     while true; do
         INFO "是否停止使用 阿里云盘 TV Token 配置 [Y/n]（默认 n）"
-        read -erp "Use_TV_Token:" USE_TV_TOKEN
+        auto_read -erp "Use_TV_Token:" USE_TV_TOKEN
         [[ -z "${USE_TV_TOKEN}" ]] && USE_TV_TOKEN="n"
         if [[ ${USE_TV_TOKEN} == [YyNn] ]]; then
             break
@@ -5564,7 +5582,7 @@ function uninstall_xiaoya_aliyuntvtoken_connector() {
         rm -f "${config_dir}/myopentoken.txt"
         while true; do
             INFO "是否配置阿里云盘 Open Token（myopentoken文件） [Y/n]（默认 y）"
-            read -erp "Set_Open_Token:" SET_OPEN_TOKEN
+            auto_read -erp "Set_Open_Token:" SET_OPEN_TOKEN
             [[ -z "${SET_OPEN_TOKEN}" ]] && SET_OPEN_TOKEN="y"
             if [[ ${SET_OPEN_TOKEN} == [YyNn] ]]; then
                 break
@@ -5599,7 +5617,7 @@ function main_xiaoya_aliyuntvtoken_connector() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
@@ -5681,7 +5699,7 @@ function main_lrcapi() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
@@ -5778,7 +5796,7 @@ function init_container_name() {
 function change_container_name() {
 
     INFO "请输入新的容器名称"
-    read -erp "Container name:" container_name
+    auto_read -erp "Container name:" container_name
     [[ -z "${container_name}" ]] && container_name=$(cat ${DDSREM_CONFIG_DIR}/container_name/"${1}".txt)
     echo "${container_name}" > ${DDSREM_CONFIG_DIR}/container_name/"${1}".txt
     clear
@@ -5802,7 +5820,7 @@ function container_name_settings() {
     echo -e "8、更改 Jellyfin 容器名             （当前：${Green}${xiaoya_jellyfin_name}${Font}）"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-8]:" num
+    auto_read -erp "请输入数字 [0-8]:" num
     case "$num" in
     1)
         change_container_name "xiaoya_alist_name"
@@ -5844,7 +5862,7 @@ function container_name_settings() {
 function reset_script_configuration() {
 
     INFO "是否${Red}删除所有脚本配置文件${Font} [Y/n]（默认 Y 删除）"
-    read -erp "Clean config:" CLEAN_CONFIG
+    auto_read -erp "Clean config:" CLEAN_CONFIG
     [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
 
     if [[ ${CLEAN_CONFIG} == [Yy] ]]; then
@@ -5943,7 +5961,7 @@ function main_advanced_configuration() {
     echo -e "9、开启/关闭 使用宿主机7z命令解压             当前状态：${_use_host_7z_command}"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-9]:" num
+    auto_read -erp "请输入数字 [0-9]:" num
     case "$num" in
     1)
         clear
@@ -6042,7 +6060,7 @@ function main_other_tools() {
     echo -e "9、安装/卸载 CasaOS"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-9]:" num
+    auto_read -erp "请输入数字 [0-9]:" num
     case "$num" in
     1)
         clear
@@ -6077,7 +6095,7 @@ function main_other_tools() {
         INFO "系统磁盘挂载情况:"
         show_disk_mount
         INFO "按任意键返回菜单"
-        read -rs -n 1 -p ""
+        auto_read -rs -n 1 -p ""
         clear
         main_other_tools
         ;;
@@ -6132,7 +6150,7 @@ function main_return() {
 6、高级配置 | Docker version: ${Blue}${DOCKER_VERSION}${Font} ${IP_CITY}
 0、退出脚本 | Thanks: ${Sky_Blue}heiheigui,xiaoyaLiu,Harold,AI老G,monlor,Rik${Font}
 ——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-6]:" num
+    auto_read -erp "请输入数字 [0-6]:" num
     case "$num" in
     1)
         clear
@@ -6179,7 +6197,7 @@ function main_return() {
             if ! docker container inspect xiaoya-aliyuntvtoken_connector > /dev/null 2>&1; then
                 while true; do
                     INFO "是否自建阿里云盘 TV Token 令牌刷新接口 [Y/n]（默认 Y）"
-                    read -erp "INSTALL_TVTOKEN:" INSTALL_TVTOKEN
+                    auto_read -erp "INSTALL_TVTOKEN:" INSTALL_TVTOKEN
                     [[ -z "${INSTALL_TVTOKEN}" ]] && INSTALL_TVTOKEN="Y"
                     if [[ ${INSTALL_TVTOKEN} == [YyNn] ]]; then
                         break

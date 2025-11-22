@@ -17,6 +17,40 @@
 #
 # ——————————————————————————————————————————————————————————————————————————————————
 
+# 自动化读取函数：支持自动模式和交互模式
+# 使用方法：auto_read -erp "提示:" 变量名
+# 环境变量 XIAOYA_AUTO_MODE=true 启用自动模式（跳过所有交互，使用默认值）
+function auto_read() {
+    if [ "${XIAOYA_AUTO_MODE}" == "true" ] || [ "${XIAOYA_AUTO_MODE}" == "1" ]; then
+        # 自动模式：提取提示信息并显示，但不等待输入
+        local prompt=""
+        local var_name=""
+        local args=("$@")
+
+        # 解析参数
+        for ((i=0; i<${#args[@]}; i++)); do
+            if [[ "${args[i]}" == -* ]]; then
+                continue
+            elif [[ "${args[i]}" == *:* ]] || [[ "${args[i]}" == *\? ]]; then
+                prompt="${args[i]}"
+            else
+                var_name="${args[i]}"
+            fi
+        done
+
+        # 显示提示信息（如果有）
+        if [ -n "$prompt" ]; then
+            echo -e "\n${Yellow}[自动模式]${Font} $prompt ${Yellow}使用默认值${Font}" >&2
+        fi
+
+        # 立即返回，让后续的默认值设置生效
+        return 0
+    else
+        # 正常交互模式
+        command read "$@"
+    fi
+}
+
 function ___install_docker() {
 
     if ! command -v docker; then
@@ -367,7 +401,7 @@ function return_menu() {
     t=60
     while [[ -z "$answer" && $t -gt 0 ]]; do
         printf "\r%2d 秒后将自动退出脚本：" $t
-        read -r -t 1 -n 1 answer
+        auto_read -r -t 1 -n 1 answer
         t=$((t - 1))
     done
     [[ -z "${answer}" ]] && answer="n"

@@ -22,7 +22,7 @@ function install_xiaoya_notify_cron() {
     if [ ! -f ${DDSREM_CONFIG_DIR}/resilio_config_dir.txt ]; then
         INFO "请输入Resilio-Sync配置文件目录"
         WARN "注意：Resilio-Sync 并且必须安装，本次获取目录只用于存放日志文件！"
-        read -erp "CONFIG_DIR:" CONFIG_DIR
+        auto_read -erp "CONFIG_DIR:" CONFIG_DIR
         touch ${DDSREM_CONFIG_DIR}/resilio_config_dir.txt
         echo "${CONFIG_DIR}" > ${DDSREM_CONFIG_DIR}/resilio_config_dir.txt
     fi
@@ -36,9 +36,9 @@ function install_xiaoya_notify_cron() {
     # 配置定时任务Cron
     while true; do
         INFO "请输入您希望的同步时间"
-        read -erp "注意：24小时制，格式：hh:mm，小时分钟之间用英文冒号分隔 （示例：23:45，默认：06:00）：" sync_time
+        auto_read -erp "注意：24小时制，格式：hh:mm，小时分钟之间用英文冒号分隔 （示例：23:45，默认：06:00）：" sync_time
         [[ -z "${sync_time}" ]] && sync_time="06:00"
-        read -erp "您希望几天同步一次？（单位：天）（默认：7）" sync_day
+        auto_read -erp "您希望几天同步一次？（单位：天）（默认：7）" sync_day
         [[ -z "${sync_day}" ]] && sync_day="7"
         # 中文冒号纠错
         time_value=${sync_time//：/:}
@@ -55,7 +55,7 @@ function install_xiaoya_notify_cron() {
 
     while true; do
         INFO "是否开启Emby config自动同步 [Y/n]（默认 Y 开启）"
-        read -erp "Auto update config:" AUTO_UPDATE_CONFIG
+        auto_read -erp "Auto update config:" AUTO_UPDATE_CONFIG
         [[ -z "${AUTO_UPDATE_CONFIG}" ]] && AUTO_UPDATE_CONFIG="y"
         if [[ ${AUTO_UPDATE_CONFIG} == [YyNn] ]]; then
             break
@@ -71,7 +71,7 @@ function install_xiaoya_notify_cron() {
 
     while true; do
         INFO "是否开启自动同步 all pikpak 和 115 元数据 [Y/n]（默认 Y 开启）"
-        read -erp "Auto update all & pikpak:" AUTO_UPDATE_ALL_PIKPAK
+        auto_read -erp "Auto update all & pikpak:" AUTO_UPDATE_ALL_PIKPAK
         [[ -z "${AUTO_UPDATE_ALL_PIKPAK}" ]] && AUTO_UPDATE_ALL_PIKPAK="y"
         if [[ ${AUTO_UPDATE_ALL_PIKPAK} == [YyNn] ]]; then
             break
@@ -91,10 +91,10 @@ function install_xiaoya_notify_cron() {
         RETURN_DATA="$(data_crep "r" "install_xiaoya_notify_cron")"
         if [ "${RETURN_DATA}" == "None" ]; then
             INFO "请输入其他参数（默认 无 ）"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
         else
             INFO "已读取您上次设置的参数：${RETURN_DATA} (默认不更改回车继续，如果需要更改请输入新参数)"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
             [[ -z "${extra_parameters}" ]] && extra_parameters=${RETURN_DATA}
         fi
         extra_parameters=$(data_crep "w" "install_xiaoya_notify_cron")
@@ -162,28 +162,28 @@ function install_resilio() {
     if [ -f ${DDSREM_CONFIG_DIR}/resilio_config_dir.txt ]; then
         OLD_CONFIG_DIR=$(cat ${DDSREM_CONFIG_DIR}/resilio_config_dir.txt)
         INFO "已读取Resilio-Sync配置文件路径：${OLD_CONFIG_DIR} (默认不更改回车继续，如果需要更改请输入新路径)"
-        read -erp "CONFIG_DIR:" CONFIG_DIR
+        auto_read -erp "CONFIG_DIR:" CONFIG_DIR
         [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR=${OLD_CONFIG_DIR}
         echo "${CONFIG_DIR}" > ${DDSREM_CONFIG_DIR}/resilio_config_dir.txt
     else
         INFO "请输入配置文件目录（默认 ${MEDIA_DIR}/resilio ）"
-        read -erp "CONFIG_DIR:" CONFIG_DIR
+        auto_read -erp "CONFIG_DIR:" CONFIG_DIR
         [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR="${MEDIA_DIR}/resilio"
         touch ${DDSREM_CONFIG_DIR}/resilio_config_dir.txt
         echo "${CONFIG_DIR}" > ${DDSREM_CONFIG_DIR}/resilio_config_dir.txt
     fi
 
     INFO "请输入后台管理端口（默认 8888 ）"
-    read -erp "HT_PORT:" HT_PORT
+    auto_read -erp "HT_PORT:" HT_PORT
     [[ -z "${HT_PORT}" ]] && HT_PORT="8888"
 
     INFO "请输入同步端口（默认 55555 ）"
-    read -erp "SYNC_PORT:" SYNC_PORT
+    auto_read -erp "SYNC_PORT:" SYNC_PORT
     [[ -z "${SYNC_PORT}" ]] && SYNC_PORT="55555"
 
     INFO "resilio容器内存上限（单位：MB，默认：2048）"
     WARN "PS: 部分系统有可能不支持内存限制设置，请输入 n 取消此设置！"
-    read -erp "mem_size:" mem_size
+    auto_read -erp "mem_size:" mem_size
     [[ -z "${mem_size}" ]] && mem_size="2048"
     if [[ ${mem_size} == [Nn] ]]; then
         mem_set=
@@ -192,7 +192,7 @@ function install_resilio() {
     fi
 
     INFO "resilio日志文件大小上限（单位：MB；默认：2；设置为 0 则代表关闭日志；设置为 n 则代表取消此设置）"
-    read -erp "log_size:" log_size
+    auto_read -erp "log_size:" log_size
     [[ -z "${log_size}" ]] && log_size="2"
 
     if [ "${log_size}" == "0" ]; then
@@ -209,10 +209,10 @@ function install_resilio() {
         RETURN_DATA="$(data_crep "r" "install_xiaoya_resilio")"
         if [ "${RETURN_DATA}" == "None" ]; then
             INFO "请输入其他参数（默认 无 ）"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
         else
             INFO "已读取您上次设置的参数：${RETURN_DATA} (默认不更改回车继续，如果需要更改请输入新参数)"
-            read -erp "Extra parameters:" extra_parameters
+            auto_read -erp "Extra parameters:" extra_parameters
             [[ -z "${extra_parameters}" ]] && extra_parameters=${RETURN_DATA}
         fi
         extra_parameters=$(data_crep "w" "install_xiaoya_resilio")
@@ -220,7 +220,7 @@ function install_resilio() {
 
     while true; do
         INFO "是否自动配置系统 inotify watches & instances 的数值 [Y/n]（默认 Y）"
-        read -erp "inotify:" inotify_set
+        auto_read -erp "inotify:" inotify_set
         [[ -z "${inotify_set}" ]] && inotify_set="y"
         if [[ ${inotify_set} == [YyNn] ]]; then
             break
@@ -385,7 +385,7 @@ function main_resilio() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
@@ -490,7 +490,7 @@ function once_sync_emby_config() {
 
     while true; do
         INFO "是否前台输出运行日志 [Y/n]（默认 Y）"
-        read -erp "Log out:" LOG_OUT
+        auto_read -erp "Log out:" LOG_OUT
         [[ -z "${LOG_OUT}" ]] && LOG_OUT="y"
         if [[ ${LOG_OUT} == [YyNn] ]]; then
             break
@@ -565,7 +565,7 @@ function main_deprecation_xiaoya_alist() {
     echo -e "1、创建/删除 定时同步更新数据（${Red}功能已弃用，只提供删除${Font}）  当前状态：$(judgment_xiaoya_alist_sync_data_status)"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-1]:" num
+    auto_read -erp "请输入数字 [0-1]:" num
     case "$num" in
     1)
         clear
@@ -622,7 +622,7 @@ function main_deprecation_xiaoya_all_emby() {
 4、创建/删除 同步定时更新任务（${Red}已弃用${Font}）       当前状态：$(judgment_xiaoya_notify_status)"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-4]:" num
+    auto_read -erp "请输入数字 [0-4]:" num
     case "$num" in
     1)
         clear
@@ -700,7 +700,7 @@ ${Blue}弃用菜单${Font}\n
 3、安装/卸载 小雅Jellyfin全家桶              当前状态：$(judgment_container "${xiaoya_jellyfin_name}")
 0、返回上级
 ——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear

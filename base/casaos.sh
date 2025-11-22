@@ -25,7 +25,7 @@ function main_casaos() {
     echo -e "2、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-2]:" num
+    auto_read -erp "请输入数字 [0-2]:" num
     case "$num" in
     1)
         clear

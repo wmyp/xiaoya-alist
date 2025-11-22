@@ -101,7 +101,7 @@ function main_set_image() {
     echo -e "3、iceyheart/embycrk"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         sedsh "s/image=.*/image=emby/" "${config_dir}/emby_config.txt"
@@ -157,13 +157,13 @@ function main_set_version() {
     fi
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         # sedsh "s/version=.*/version=latest/" "${config_dir}/emby_config.txt"
         WARN "小雅 Emby 全家桶目前不支持 latest 镜像！"
         INFO "按任意键继续配置"
-        read -rs -n 1 -p ""
+        auto_read -rs -n 1 -p ""
         clear
         main_set_version
         ;;
@@ -176,7 +176,7 @@ function main_set_version() {
         local old_version new_version
         old_version="${version}"
         INFO "已读取当前Emby镜像版本：${old_version} (默认不更改回车继续，如果需要更改请输入新版本号)"
-        read -erp "NEW_VERSION:" new_version
+        auto_read -erp "NEW_VERSION:" new_version
         [[ -z "${new_version}" ]] && new_version=${old_version}
         sedsh "s/version=.*/version=${new_version}/" "${config_dir}/emby_config.txt"
         clear
@@ -200,12 +200,12 @@ function get_media_dir() {
     if [ "$media_dir" != "" ]; then
         OLD_MEDIA_DIR=${media_dir}
         INFO "已读取媒体库目录：${OLD_MEDIA_DIR} (默认不更改回车继续，如果需要更改请输入新路径)"
-        read -erp "MEDIA_DIR:" MEDIA_DIR
+        auto_read -erp "MEDIA_DIR:" MEDIA_DIR
         [[ -z "${MEDIA_DIR}" ]] && MEDIA_DIR=${OLD_MEDIA_DIR}
         sedsh "s#media_dir=.*#media_dir=${MEDIA_DIR}#" "${config_dir}/emby_config.txt"
     else
         INFO "请输入媒体库目录（默认 /media ）"
-        read -erp "MEDIA_DIR:" MEDIA_DIR
+        auto_read -erp "MEDIA_DIR:" MEDIA_DIR
         [[ -z "${MEDIA_DIR}" ]] && MEDIA_DIR="/media"
         sedsh "s#media_dir=.*#media_dir=${MEDIA_DIR}#" "${config_dir}/emby_config.txt"
     fi
@@ -253,7 +253,7 @@ function main_return() {
     # echo -e "6、是否安装Resilio         当前配置：$(get_resilio)"
     echo -e "0、退出脚本 | Script info: ${DATE_VERSION} Thanks: ${Blue}xiaoyaLiu${Font}"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-5]:" num
+    auto_read -erp "请输入数字 [0-5]:" num
     case "$num" in
     1)
         set_dev_dri

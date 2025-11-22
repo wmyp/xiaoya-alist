@@ -125,14 +125,14 @@ function choose_image_mirror() {
     fi
     echo -e "${interface}\n0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-${z}]:" num
+    auto_read -erp "请输入数字 [0-${z}]:" num
     if [ "${num}" == "0" ]; then
         clear
         "${1}"
     elif [ "${num}" == "${z}" ]; then
         clear
         INFO "请输入自定义源地址（当前自定义源地址为：$(cat "${DDSREM_CONFIG_DIR}/image_mirror_user.txt")，回车默认不修改）"
-        read -erp "custom_url:" custom_url
+        auto_read -erp "custom_url:" custom_url
         [[ -z "${custom_url}" ]] && custom_url=$(cat "${DDSREM_CONFIG_DIR}/image_mirror_user.txt")
         echo "${custom_url}" > ${DDSREM_CONFIG_DIR}/image_mirror.txt
         echo "${custom_url}" > ${DDSREM_CONFIG_DIR}/image_mirror_user.txt
@@ -164,7 +164,7 @@ function choose_image_mirror() {
         docker rmi "${IMAGE_MIRROR}/library/hello-world:latest"
     fi
     INFO "按任意键返回 Docker镜像源选择 菜单"
-    read -rs -n 1 -p ""
+    auto_read -rs -n 1 -p ""
     clear
     choose_image_mirror "${1}"
 

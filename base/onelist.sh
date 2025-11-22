@@ -22,12 +22,12 @@ function install_onelist() {
     if [ -f ${DDSREM_CONFIG_DIR}/onelist_config_dir.txt ]; then
         OLD_CONFIG_DIR=$(cat ${DDSREM_CONFIG_DIR}/onelist_config_dir.txt)
         INFO "已读取Onelist配置文件路径：${OLD_CONFIG_DIR} (默认不更改回车继续，如果需要更改请输入新路径)"
-        read -erp "CONFIG_DIR:" CONFIG_DIR
+        auto_read -erp "CONFIG_DIR:" CONFIG_DIR
         [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR=${OLD_CONFIG_DIR}
         echo "${CONFIG_DIR}" > ${DDSREM_CONFIG_DIR}/onelist_config_dir.txt
     else
         INFO "请输入配置文件目录（默认 /etc/onelist ）"
-        read -erp "CONFIG_DIR:" CONFIG_DIR
+        auto_read -erp "CONFIG_DIR:" CONFIG_DIR
         [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR="/etc/onelist"
         touch ${DDSREM_CONFIG_DIR}/onelist_config_dir.txt
         echo "${CONFIG_DIR}" > ${DDSREM_CONFIG_DIR}/onelist_config_dir.txt
@@ -35,7 +35,7 @@ function install_onelist() {
 
     while true; do
         INFO "请输入后台管理端口（默认 5245 ）"
-        read -erp "HT_PORT:" HT_PORT
+        auto_read -erp "HT_PORT:" HT_PORT
         [[ -z "${HT_PORT}" ]] && HT_PORT="5245"
         if check_port "${HT_PORT}"; then
             break
@@ -75,7 +75,7 @@ function uninstall_onelist() {
 
     while true; do
         INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
-        read -erp "Clean config:" CLEAN_CONFIG
+        auto_read -erp "Clean config:" CLEAN_CONFIG
         [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
         if [[ ${CLEAN_CONFIG} == [YyNn] ]]; then
             break
@@ -111,7 +111,7 @@ function main_onelist() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear

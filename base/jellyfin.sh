@@ -474,7 +474,7 @@ function main_download_unzip_xiaoya_jellyfin() {
     echo -e "10、当前下载器【aria2/wget】                  当前状态：${Green}${__data_downloader}${Font}"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-10]:" num
+    auto_read -erp "请输入数字 [0-10]:" num
     case "$num" in
     1)
         clear
@@ -652,7 +652,7 @@ function uninstall_xiaoya_all_jellyfin() {
         sed 's!/[^/]*$!!')
     INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
     INFO "配置文件路径：${OLD_MEDIA_DIR}"
-    read -erp "Clean config:" CLEAN_CONFIG
+    auto_read -erp "Clean config:" CLEAN_CONFIG
     [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
 
     for i in $(seq -w 3 -1 0); do
@@ -709,7 +709,7 @@ function main_xiaoya_all_jellyfin() {
     echo -e "4、卸载Jellyfin全家桶"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-4]:" num
+    auto_read -erp "请输入数字 [0-4]:" num
     case "$num" in
     1)
         clear

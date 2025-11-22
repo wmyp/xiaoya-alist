@@ -22,12 +22,12 @@ function install_portainer() {
     if [ -f ${DDSREM_CONFIG_DIR}/portainer_config_dir.txt ]; then
         OLD_CONFIG_DIR=$(cat ${DDSREM_CONFIG_DIR}/portainer_config_dir.txt)
         INFO "已读取Portainer配置文件路径：${OLD_CONFIG_DIR} (默认不更改回车继续，如果需要更改请输入新路径)"
-        read -erp "CONFIG_DIR:" CONFIG_DIR
+        auto_read -erp "CONFIG_DIR:" CONFIG_DIR
         [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR=${OLD_CONFIG_DIR}
         echo "${CONFIG_DIR}" > ${DDSREM_CONFIG_DIR}/portainer_config_dir.txt
     else
         INFO "请输入配置文件目录（默认 /etc/portainer ）"
-        read -erp "CONFIG_DIR:" CONFIG_DIR
+        auto_read -erp "CONFIG_DIR:" CONFIG_DIR
         [[ -z "${CONFIG_DIR}" ]] && CONFIG_DIR="/etc/portainer"
         touch ${DDSREM_CONFIG_DIR}/portainer_config_dir.txt
         echo "${CONFIG_DIR}" > ${DDSREM_CONFIG_DIR}/portainer_config_dir.txt
@@ -35,7 +35,7 @@ function install_portainer() {
 
     while true; do
         INFO "请输入后台HTTP管理端口（默认 9000 ）"
-        read -erp "HTTP_PORT:" HTTP_PORT
+        auto_read -erp "HTTP_PORT:" HTTP_PORT
         [[ -z "${HTTP_PORT}" ]] && HTTP_PORT="9000"
         if check_port "${HTTP_PORT}"; then
             break
@@ -46,7 +46,7 @@ function install_portainer() {
 
     while true; do
         INFO "请输入后台HTTP管理端口（默认 9443 ）"
-        read -erp "HTTPS_PORT:" HTTPS_PORT
+        auto_read -erp "HTTPS_PORT:" HTTPS_PORT
         [[ -z "${HTTPS_PORT}" ]] && HTTPS_PORT="9443"
         if check_port "${HTTPS_PORT}"; then
             break
@@ -56,7 +56,7 @@ function install_portainer() {
     done
 
     INFO "请输入镜像TAG（默认 latest ）"
-    read -erp "TAG:" TAG
+    auto_read -erp "TAG:" TAG
     [[ -z "${TAG}" ]] && TAG="latest"
 
     docker_pull "portainer/portainer-ce:${TAG}"
@@ -89,7 +89,7 @@ function uninstall_portainer() {
 
     while true; do
         INFO "是否${Red}删除配置文件${Font} [Y/n]（默认 Y 删除）"
-        read -erp "Clean config:" CLEAN_CONFIG
+        auto_read -erp "Clean config:" CLEAN_CONFIG
         [[ -z "${CLEAN_CONFIG}" ]] && CLEAN_CONFIG="y"
         if [[ ${CLEAN_CONFIG} == [YyNn] ]]; then
             break
@@ -125,7 +125,7 @@ function main_portainer() {
     echo -e "3、卸载"
     echo -e "0、返回上级"
     echo -e "——————————————————————————————————————————————————————————————————————————————————"
-    read -erp "请输入数字 [0-3]:" num
+    auto_read -erp "请输入数字 [0-3]:" num
     case "$num" in
     1)
         clear
