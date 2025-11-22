@@ -66,19 +66,28 @@ function container_update() {
     local retries=0
     local max_retries=3
     IMAGE_MIRROR=$(cat "${DDSREM_CONFIG_DIR}/image_mirror.txt")
-    while [ $retries -lt $max_retries ]; do
-        if docker pull "${IMAGE_MIRROR}/${run_image}"; then
-            INFO "${1} 镜像拉取成功！"
-            break
-        else
-            WARN "${1} 镜像拉取失败，正在进行第 $((retries + 1)) 次重试..."
-            retries=$((retries + 1))
-        fi
-    done
-    if [ $retries -eq $max_retries ]; then
-        ERROR "镜像拉取失败，已达到最大重试次数！"
-        return 1
+
+    # 优先使用本地镜像，如果本地不存在才拉取
+    if docker inspect "${run_image}" > /dev/null 2>&1; then
+        INFO "检测到本地已存在 ${run_image} 镜像，优先使用本地镜像（跳过拉取）"
     else
+        INFO "本地不存在 ${run_image} 镜像，开始从远程拉取..."
+        while [ $retries -lt $max_retries ]; do
+            if docker pull "${IMAGE_MIRROR}/${run_image}"; then
+                INFO "${1} 镜像拉取成功！"
+                break
+            else
+                WARN "${1} 镜像拉取失败，正在进行第 $((retries + 1)) 次重试..."
+                retries=$((retries + 1))
+            fi
+        done
+        if [ $retries -eq $max_retries ]; then
+            ERROR "镜像拉取失败，已达到最大重试次数！"
+            return 1
+        fi
+    fi
+
+    if [ $retries -lt $max_retries ]; then
         if [ "${IMAGE_MIRROR}" != "docker.io" ]; then
             pull_image=$(docker images -q "${IMAGE_MIRROR}/${run_image}")
         else
